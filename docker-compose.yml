@@ -1,0 +1,45 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: leads_mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - leads_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: leads_backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://mongodb:27017/smart-leads-dashboard
+      - JWT_SECRET=supersecretjwtkey123!@#
+    depends_on:
+      - mongodb
+    networks:
+      - leads_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: leads_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - leads_network
+
+volumes:
+  mongodb_data:
+
+networks:
+  leads_network:
+    driver: bridge
