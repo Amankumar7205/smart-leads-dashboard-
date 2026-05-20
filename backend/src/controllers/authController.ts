@@ -28,7 +28,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 
     const user = await User.create(validatedData);
 
-    const token = generateToken(user._id as string);
+    const token = generateToken(user._id.toString());
 
     res.status(201).json({
       success: true,
@@ -68,7 +68,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       return next(new AppError('Invalid credentials', 401));
     }
 
-    const token = generateToken(user._id as string);
+    const token = generateToken(user._id.toString());
 
     res.status(200).json({
       success: true,
